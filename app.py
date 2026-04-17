@@ -7,8 +7,22 @@ df = pd.read_csv("cleaned_data.csv")
 st.title("PLPM Analysis Dashboard")
 
 st.sidebar.header("Filter")
-division = st.sidebar.multiselect("Select Division", df['Division'].unique(), default=df['Division'].unique())
+division_col = [col for col in df.columns if col.lower() == 'division']
 
+if division_col:
+    division_col = division_col[0]
+else:
+    st.error("Division column not found!")
+    st.write("Available columns:", df.columns)
+    st.stop()
+
+division = st.sidebar.multiselect(
+    "Select Division",
+    df[division_col].unique(),
+    default=df[division_col].unique()
+)
+
+filtered_df = df[df[division_col].isin(division)]
 filtered_df = df[df['Division'].isin(division)]
 
 st.subheader("Key Metrics")
